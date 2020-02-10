@@ -16,26 +16,30 @@
                 android:layout_marginTop="10dp">
 
 
-                        <Button android:layout_width="wrap_content"
+                        <Button android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:id="@+id/btn_restaurants"
+                            android:layout_weight="1"
                             android:background="#030"
                             android:textColor="#fff"
                             android:textAppearance="@style/TextAppearance.AppCompat"
                             android:text="Restaurants"
                             android:onClick="btnClick"/>
-                        <Button android:layout_width="wrap_content"
+                        <Button android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:id="@+id/btn_museum"
                             android:background="#030"
+                            android:layout_weight="1"
                             android:textColor="#fff"
                             android:textAppearance="@style/TextAppearance.AppCompat"
                             android:text="Museums"
                             android:onClick="btnClick" />
-                        <Button android:layout_width="wrap_content"
+
+                        <Button android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:id="@+id/btn_cafe"
                             android:background="#030"
+                            android:layout_weight="1"
                             android:textColor="#fff"
                             android:textAppearance="@style/TextAppearance.AppCompat"
                             android:text="Cafe"
@@ -62,12 +66,14 @@
 
             </LinearLayout>
         </HorizontalScrollView>
+
     <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:id="@+id/map"/>
+        android:layout_weight="1" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

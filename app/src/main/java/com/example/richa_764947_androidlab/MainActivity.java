@@ -43,7 +43,6 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     GoogleMap mMap;
-    Spinner sp;
     double lat,longi,dest_lat,dest_long;
     final int radious = 1000;
     //get user lopcation
@@ -59,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         initMap();
         getUserLocation();
 
-      //sp = findViewById(R.id.spinnr_place);
+
         if(!checkPermission()){
             requestPermission();
         }else {
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        // mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
@@ -105,6 +104,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 location.setLongitude(latLng.longitude);
                 dest_lat = latLng.latitude;
                 dest_long = latLng.longitude;
+
+
+
+                Toast.makeText(MainActivity.this, "destinatio lat long:"+dest_long, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "destinatio lat long:"+dest_lat, Toast.LENGTH_SHORT).show();
 
                 //setMarker
                 setMarker(location);
@@ -124,7 +128,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setMarker(Location location){
         LatLng userlatlong = new LatLng(location.getLatitude(),location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions().position(userlatlong).title("Your Destination").snippet("you are going there").draggable(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+        MarkerOptions markerOptions = new MarkerOptions().position(userlatlong).title("Your Destination");
+        markerOptions.draggable(true);
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         mMap.addMarker(markerOptions);
 
     }
@@ -139,33 +145,45 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
-//    public void btnClick(View view){
-//        Object[] dataTransfer;
-//        switch (view.getId()){
-//
-//            case R.id.btn_clear:
-////                String url = getUrl(lat,longi,"restaurant");
-////                Log.i("tag", "btnClick: " + url);
-////                dataTransfer = new Object[2];
-////                dataTransfer[0] = mMap;
-////                dataTransfer[1] = url;
-////                getNearByPlaceData getNearByPlaceData = new getNearByPlaceData();
-////                getNearByPlaceData.execute(dataTransfer);
-////                Toast.makeText(this, "resturents", Toast.LENGTH_SHORT).show();
-//                break;
-//
-//            case  R.id.btn_distance:
-//                String url2 = getDistanceURL();
-//                dataTransfer = new Object[3];
-//                dataTransfer[0] = mMap;
-//                dataTransfer[1] = url2;
-//                dataTransfer[2] = new LatLng(dest_lat,dest_long);
-//
-//                break;
-//
-//
-//        }
-//    }
+    public void btnClick(View view){
+        Object[] dataTransfer = new Object[3];
+        GetNearPlaces getNearByPlaceData = new GetNearPlaces();
+        switch (view.getId()){
+
+            case R.id.btn_restaurants:
+                mMap.clear();
+                String url = getUrl(lat,longi,"restaurant");
+                Log.i("tag", "btnClick: " + url);
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+                dataTransfer[2] = "resturent";
+                getNearByPlaceData.execute(dataTransfer);
+                Toast.makeText(this, "restaurant", Toast.LENGTH_SHORT).show();
+                break;
+
+            case  R.id.btn_museum:
+               // mMap.clear();
+               url = getUrl(lat,longi,"museum");
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+                dataTransfer[2] = "museum";
+                getNearByPlaceData.execute(dataTransfer);
+                Toast.makeText(this, "museum", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.btn_cafe:
+                //mMap.clear();
+                url = getUrl(lat,longi,"cafe");
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+                dataTransfer[2] = "cafe";
+                getNearByPlaceData.execute(dataTransfer);
+                Toast.makeText(this, "cafe", Toast.LENGTH_SHORT).show();
+                break;
+
+
+        }
+    }
 
 
 
@@ -176,9 +194,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         placeurl.append("origin="+lat+","+longi);
         placeurl.append("&destination="+dest_lat+","+dest_long);
         // placeurl.append("&type:"+nearplace);
-        placeurl.append("&key=AIzaSyDK2Du7rvxW4d4NQmKg8qAyxaZ0dGgaY5k");
+       // placeurl.append("&key=AIzaSyCJzqczAn4CG-wEgdlbdAbIxeHGta012rI");
         // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=43.647845,-79.3888367&radius=1000$typerestaurant&key=AIzaSyDK2Du7rvxW4d4NQmKg8qAyxaZ0dGgaY5k
-        System.out.println(placeurl.toString());
+       // System.out.println(placeurl.toString());
         return placeurl.toString();
     }
 
@@ -188,9 +206,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         placeurl.append("location="+lat+","+longi);
         placeurl.append("&radius="+radious);
         placeurl.append("&type:"+nearplace);
-        placeurl.append("&key=AIzaSyCJzqczAn4CG-wEgdlbdAbIxeHGta012rI");
+        placeurl.append("&key=AIzaSyDjxAVT7FnqkR8vyPxMIwzRSVoQHDtOab4");
         // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=43.647845,-79.3888367&radius=1000$typerestaurant&key=AIzaSyDK2Du7rvxW4d4NQmKg8qAyxaZ0dGgaY5k
-        System.out.println(placeurl.toString());
+        //System.out.println(placeurl.toString());
         return placeurl.toString();
     }
 

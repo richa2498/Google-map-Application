@@ -34,7 +34,7 @@ public class ParseData {
         lng = jsonObject.getJSONObject("geometry").getJSONObject("location").getString("lng");
         refernce = jsonObject.getString("reference");
 
-        googleplace.put("place_name",placeName);
+        googleplace.put("placeName",placeName);
         googleplace.put("vicinity",vicinity);
         googleplace.put("lat",lat);
         googleplace.put("lng",lng);

@@ -33,7 +33,7 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> {
         }
 
 
-        //returnig object of joson
+        //returning object of json
         return placeData;
     }
 
@@ -50,7 +50,7 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> {
             MarkerOptions options = new MarkerOptions();
             HashMap<String,String> mapPlace = nearPlacesList.get(i);
 
-            String name = mapPlace.get("place_name");
+            String name = mapPlace.get("placeName");
             String vicinity = mapPlace.get("vicinity");
             double lat = Double.parseDouble(mapPlace.get("lat"));
             double longi = Double.parseDouble(mapPlace.get("lng"));
