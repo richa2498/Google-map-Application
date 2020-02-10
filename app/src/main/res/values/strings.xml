@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Richa_764947_AndroidLab</string>
     <string name="api_key">AIzaSyAXP_V4ORKJJPaiJ9MHrQnj5D8H9IpiY50</string>
+    <string-array name="NearBy">
+        <item>Restaurants</item>
+        <item>School</item>
+        <item>Museum</item>
+    </string-array>
 </resources>

@@ -6,44 +6,62 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Resturent"
-            android:id="@+id/btn_resturent"
-            android:layout_marginRight="0.5dp"
-            android:onClick="btnClick"
-            android:background="#030"
-            android:textColor="#fff"/>
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Distance"
-            android:id="@+id/btn_distance"
-            android:layout_marginLeft="0.5dp"
-            android:onClick="btnClick"
-            android:background="#065"
-            android:textColor="#fff"/>
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Clear Map"
-            android:id="@+id/btn_clear"
-            android:onClick="btnClick"
-            android:layout_marginLeft="0.5dp"
-            android:background="#099"
-            android:textColor="#fff"/>
+        <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true">
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal" android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp">
 
 
-    </LinearLayout>
+                        <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/btn_restaurants"
+                            android:background="#030"
+                            android:textColor="#fff"
+                            android:textAppearance="@style/TextAppearance.AppCompat"
+                            android:text="Restaurants"
+                            android:onClick="btnClick"/>
+                        <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/btn_museum"
+                            android:background="#030"
+                            android:textColor="#fff"
+                            android:textAppearance="@style/TextAppearance.AppCompat"
+                            android:text="Museums"
+                            android:onClick="btnClick" />
+                        <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/btn_cafe"
+                            android:background="#030"
+                            android:textColor="#fff"
+                            android:textAppearance="@style/TextAppearance.AppCompat"
+                            android:text="Cafe"
+                            android:onClick="btnClick" />
+                        <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button Four" />
+                        <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button Five" />
+                        <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button Six" />
+                        <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button Seven" />
+                        <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button Eight" />
+                        <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button Nine" />
+
+
+            </LinearLayout>
+        </HorizontalScrollView>
     <fragment
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -56,7 +74,7 @@
         android:id="@+id/btn_direction"
         android:background="#011"
         android:textColor="#fff"
-        android:onClick="btnClick"
+
         android:text="Get Direction"/>
 
 </LinearLayout>
