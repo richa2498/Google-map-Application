@@ -21,6 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_NAME = "favPlaces";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
+   private static final String COLUMN_ADDRESS = "address";
     private static final String COLUMN_DATE = "date";
     private static final String COLUMN_LATITUDE = "lat";
     private static final String COLUMN_LONGITUDE = "lng";
@@ -31,9 +32,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         String sql = "CREATE TABLE " + TABLE_NAME + "(" +
                 COLUMN_ID + " INTEGER NOT NULL CONSTRAINT employee_pk PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_NAME + " varchar(200) NOT NULL, " +
+                COLUMN_ADDRESS + " varchar(200), " +
                 COLUMN_DATE + " varchar(200) NOT NULL, " +
                 COLUMN_LATITUDE + " double NOT NULL, " +
                 COLUMN_LONGITUDE + " double NOT NULL); ";
@@ -49,7 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    boolean addEmployee(String name, String date, double lat, double lng) {
+    boolean addFavPlace(String name,String date,String address, double lat, double lng) {
 
         //inorder to insert ,we need writable database;
         //this method returns a sqlite instance;
@@ -61,6 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         cv.put(COLUMN_NAME,name);
         cv.put(COLUMN_DATE,date);
+        cv.put(COLUMN_ADDRESS,address);
         cv.put(COLUMN_LATITUDE,lng);
         cv.put(COLUMN_LONGITUDE,lat);
         //insert returns vallue of rownumber and -1 is not sucessfull ;
@@ -69,18 +73,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    Cursor getAllEmployee(){
+    Cursor getAllPlace(){
         SQLiteDatabase sqLiteDatabase =getReadableDatabase();
         return sqLiteDatabase.rawQuery("SELECT * FROM "+TABLE_NAME,null);
 
     }
-    boolean updateEmployee(int id,String name,double lat,double lng){
+    boolean updatePlace(int id,String name,double lat,String address,double lng){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
 
         ContentValues cv = new ContentValues();
         //this first argument of the put method is the columnn name and second value
 
         cv.put(COLUMN_NAME,name);
+        cv.put(COLUMN_ADDRESS,address);
         cv.put(COLUMN_LATITUDE,lat);
         cv.put(COLUMN_LONGITUDE,lng);
 
@@ -88,12 +93,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return  sqLiteDatabase.update(TABLE_NAME,cv,COLUMN_ID+" = ? ",new String[]{String.valueOf(id)}) >0 ;
     }
 
-    boolean deleteEmployee(int id){
+    boolean deletePlace(int id){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         return  sqLiteDatabase.delete(TABLE_NAME,COLUMN_ID+" = ? ",new String[]{String.valueOf(id)}) >0;
 
     }
 
 
+void delALL(){
+    SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        String sql = "DELETE FROM " +TABLE_NAME + ";";
+    sqLiteDatabase.execSQL(sql);
+
+}
 
 }

@@ -4,14 +4,14 @@
     android:padding="8dp">
 
     <LinearLayout
-        android:layout_width="230dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/TV_placename"
+            android:id="@+id/tv_placename"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
@@ -28,29 +28,5 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btn_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="#020000"
-            android:text="Update"
-            android:textColor="#ECF7F2" />
-
-        <Button
-            android:id="@+id/btn_delete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="#95CC8B"
-            android:text="Delete"/>
-
-
-
-    </LinearLayout>
 </LinearLayout>

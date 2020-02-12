@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Richa_764947_AndroidLab</string>
     <string name="api_key">AIzaSyAXP_V4ORKJJPaiJ9MHrQnj5D8H9IpiY50</string>
+    <string-array name="mapType">
+        <item>Satelite</item>
+        <item>Default</item>
+        <item>Hybride</item>
+    </string-array>
     <string-array name="NearBy">
         <item>Restaurants</item>
         <item>School</item>
