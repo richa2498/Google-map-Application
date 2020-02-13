@@ -3,6 +3,7 @@ package com.example.richa_764947_androidlab;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -26,6 +27,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     Geocoder geocoder;
     Spinner maptype;
     Location location;
+    boolean isMrkerClick = false;
 
     DatabaseHelper mDatabase;
     //get user lopcation
@@ -77,9 +81,43 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initMap();
+//        maptype = findViewById(R.id.choose_map);
+//        maptype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//                switch (position){
+//                    case 0:
+//                        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+//                       Toast.makeText(MainActivity.this, "Satelite", Toast.LENGTH_SHORT).show();
+//                       break;
+//                    case 1:
+//                        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+//                        Toast.makeText(MainActivity.this, "Terrrain", Toast.LENGTH_SHORT).show();
+//                        break;
+//                    case 2:
+//                        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+//                        Toast.makeText(MainActivity.this, "Hybride", Toast.LENGTH_SHORT).show();
+//                        break;
+//                    default:
+//                        mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+//                        Toast.makeText(MainActivity.this, "none", Toast.LENGTH_SHORT).show();
+//                        break;
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//                mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+//            }
+//
+//
+//        });
+
         getUserLocation();
-     mDatabase = new DatabaseHelper(this);
-     maptype = findViewById(R.id.choose_map);
+        mDatabase = new DatabaseHelper(this);
+
         if (!checkPermission()) {
             requestPermission();
         } else {
@@ -87,34 +125,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //getUserLocation();
         }
 
-        maptype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (maptype.getSelectedItem() == "Satelite") {
-                    mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                    Toast.makeText(MainActivity.this, "Satelite", Toast.LENGTH_SHORT).show();
 
-
-                }
-                if (maptype.getSelectedItem() == "Hybride") {
-                    mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                    Toast.makeText(MainActivity.this, "Hybride", Toast.LENGTH_SHORT).show();
-                } if(maptype.getSelectedItem() == "Default")
-                {
-                    mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                    Toast.makeText(MainActivity.this, "Terrain", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-
-
-        });
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.map_type, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -145,33 +164,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
        // mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        maptype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (maptype.getSelectedItem() == "Satelite") {
-                    mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                  //  startActivity(new Intent(this, MainActivity.class));
-                    Toast.makeText(MainActivity.this, "Satelite", Toast.LENGTH_SHORT).show();
 
-
-                }
-                if (maptype.getSelectedItem() == "Hybride") {
-                    mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                    Toast.makeText(MainActivity.this, "Hybride", Toast.LENGTH_SHORT).show();
-                } if(maptype.getSelectedItem() == "Default")
-                {
-                    mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                    Toast.makeText(MainActivity.this, "Terrain", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-
-
-        });
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -184,7 +177,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 //dialog.cancel();
-                                getAddress(location);
+                                try {
+                                    isMrkerClick = true;
+                                    getAddress(location);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         });
 
@@ -193,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
+                                isMrkerClick = false;
                             }
                         });
 
@@ -204,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+
             @Override
             public void onMapLongClick(LatLng latLng) {
 
@@ -213,7 +213,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 dest_lat = latLng.latitude;
                 dest_long = latLng.longitude;
                 setMarker(location);
-                getAddress(location);
+                try {
+                    getAddress(location);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             }
         });
@@ -235,41 +239,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    private void getAddress(Location location) {
+    private void getAddress(Location location) throws IOException {
         System.out.println("In Get Address");
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
         String addDate = simpleDateFormat.format(calendar.getTime());
+
         geocoder = new Geocoder(this, Locale.getDefault());
 
         System.out.println("in geocoder");
-        try {
+
             addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-        } catch (IOException e) {
-            e.printStackTrace();
+
             if (!addresses.isEmpty()) {
                 address = addresses.get(0).getLocality() + " " + addresses.get(0).getAddressLine(0);
                 System.out.println(addresses.get(0).getAddressLine(0));
 
-                if (mDatabase.addFavPlace(addresses.get(0).getLocality(),addDate,addresses.get(0).getAddressLine(0),location.getLatitude(),location.getLongitude())){
+                if (isMrkerClick  && mDatabase.addFavPlace(addresses.get(0).getLocality(),addDate,addresses.get(0).getAddressLine(0),location.getLatitude(),location.getLongitude())){
+                    isMrkerClick = false;
                     Toast.makeText(MainActivity.this, "added", Toast.LENGTH_SHORT).show();
                     loadPlaces();
                 }else {
-                    Toast.makeText(MainActivity.this, "Employee is not addaed", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(MainActivity.this, "Employee is not addaed", Toast.LENGTH_SHORT).show();
                 }
-                 Toast.makeText(this, "Address:"+addresses.get(0).getAddressLine(0), Toast.LENGTH_SHORT).show();
+                 //Toast.makeText(this, "Address:"+addresses.get(0).getAddressLine(0), Toast.LENGTH_SHORT).show();
             }
+
 
         }
 
 
-    }
 
     private void setMarker(Location location) {
         System.out.println("In SetMarker");
         LatLng userlatlong = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions().position(userlatlong).title("Your Destination");
-       // markerOptions.draggable(true);
+        markerOptions.draggable(true);
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         mMap.addMarker(markerOptions);
 
@@ -313,14 +318,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
 
             case R.id.btn_cafe:
-                //mMap.clear();
-//                url = getUrl(lat,longi,"cafe");
-//                dataTransfer[0] = mMap;
-//                dataTransfer[1] = url;
-//                dataTransfer[2] = "cafe";
-//                getNearByPlaceData.execute(dataTransfer);
-//                Toast.makeText(this, "cafe", Toast.LENGTH_SHORT).show();
-//                break;
 
                 Intent intent = new Intent(this, FavPlaces.class);
                 startActivity(intent);
@@ -336,8 +333,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         placeurl.append("&destination=" + dest_lat + "," + dest_long);
         // placeurl.append("&type:"+nearplace);
         // placeurl.append("&key=AIzaSyCJzqczAn4CG-wEgdlbdAbIxeHGta012rI");
-        // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=43.647845,-79.3888367&radius=1000$typerestaurant&key=AIzaSyDK2Du7rvxW4d4NQmKg8qAyxaZ0dGgaY5k
-        // System.out.println(placeurl.toString());
+
         return placeurl.toString();
     }
 
@@ -347,9 +343,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         placeurl.append("location=" + lat + "," + longi);
         placeurl.append("&radius=" + radious);
         placeurl.append("&type:" + nearplace);
-        placeurl.append("&key=AIzaSyDjxAVT7FnqkR8vyPxMIwzRSVoQHDtOab4");
+        placeurl.append("&key=AIzaSyDMSqImPXApQdSZ43EqemUgq2m1U_GfYok");
         // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=43.647845,-79.3888367&radius=1000$typerestaurant&key=AIzaSyDK2Du7rvxW4d4NQmKg8qAyxaZ0dGgaY5k
-        //System.out.println(placeurl.toString());
+        System.out.println(placeurl.toString());
         return placeurl.toString();
     }
 
@@ -371,6 +367,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         };
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.maptypeHYBRID:
+                if(mMap != null){
+                    mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    return true;
+                }
+            case R.id.maptypeNONE:
+                if(mMap != null){
+                    mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+                    return true;
+                }
+            case R.id.maptypeNORMAL:
+                if(mMap != null){
+                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    return true;
+                }
+            case R.id.maptypeSATELLITE:
+                if(mMap != null){
+                    mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                    return true;
+                }
+            case R.id.maptypeTERRAIN:
+                if(mMap != null){
+                    mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                    return true;
+                }
+
+
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 
     private void loadPlaces() {

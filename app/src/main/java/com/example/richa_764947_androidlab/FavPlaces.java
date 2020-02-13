@@ -32,23 +32,7 @@ public class FavPlaces extends AppCompatActivity {
          mDatabase = new DatabaseHelper(this);
          places = new ArrayList<>();
          loadPlaces();
-//
-//        list = new ArrayList<>();
-//        list.add("richa1");
-//        list.add("richa2");
-//        list.add("richa3");
-//        list.add("richa4");
-//        list.add("richa5");
-//        list.add("richa6");
-//        list.add("richa7");
-//        list.add("richa8");
-//        list.add("richa9");
-//        list.add("richa10");
-//        list.add("richa11");
-//        System.out.println(list.toString());
 
-      //  ArrayAdapter adapter = new ArrayAdapter(FavPlaces.this,android.R.layout.simple_list_item_1,list);
-      //  swipeMenuListView.setAdapter(adapter);
 
         FavPlaceAdapter adapter = new FavPlaceAdapter(this,R.layout.fav_place_cell_layout,places,mDatabase);
         swipeMenuListView.setAdapter(adapter);
@@ -63,7 +47,7 @@ public class FavPlaces extends AppCompatActivity {
                 openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
                         0xCE)));
                 // set item width
-                openItem.setWidth(170);
+                openItem.setWidth(250);
                 // set item title
                 openItem.setTitle("Open");
                 // set item title fontsize
@@ -80,7 +64,7 @@ public class FavPlaces extends AppCompatActivity {
                 deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
                         0x3F, 0x25)));
                 // set item width
-                deleteItem.setWidth(170);
+                deleteItem.setWidth(250);
                 // set a icon
                 deleteItem.setIcon(R.drawable.ic_action_name);
                 // add to menu
@@ -100,7 +84,13 @@ public class FavPlaces extends AppCompatActivity {
                         break;
                     case 1:
                         // delete
-                        Toast.makeText(FavPlaces.this, "case 1", Toast.LENGTH_SHORT).show();
+                        if(mDatabase.deletePlace(position)) {
+                            Toast.makeText(FavPlaces.this, "case 1", Toast.LENGTH_SHORT).show();
+                            loadPlaces();
+                        }else {
+                            Toast.makeText(FavPlaces.this, ""+mDatabase.deletePlace(position), Toast.LENGTH_SHORT).show();
+                        }
+                      //  loadPlaces();
                         break;
                 }
                 // false : close the menu; true : not close the menu
@@ -113,17 +103,17 @@ public class FavPlaces extends AppCompatActivity {
 
     private void loadPlaces() {
         Cursor cursor = mDatabase.getAllPlace();
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
 
             do {
-                places.add(new FavouritePlace(cursor.getInt(0),cursor.getString(1),
+                places.add(new FavouritePlace(cursor.getInt(0), cursor.getString(1),
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getDouble(4),
                         cursor.getDouble(5)));
 
 
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
 
             cursor.close();
         }

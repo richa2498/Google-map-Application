@@ -94,6 +94,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     boolean deletePlace(int id){
+
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         return  sqLiteDatabase.delete(TABLE_NAME,COLUMN_ID+" = ? ",new String[]{String.valueOf(id)}) >0;
 

@@ -7,9 +7,5 @@
         <item>Default</item>
         <item>Hybride</item>
     </string-array>
-    <string-array name="NearBy">
-        <item>Restaurants</item>
-        <item>School</item>
-        <item>Museum</item>
-    </string-array>
+
 </resources>
