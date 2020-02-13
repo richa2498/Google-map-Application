@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     List<Address> addresses;
     String address;
     Geocoder geocoder;
-    Location location;
     Spinner maptype;
+    Location location;
 
     DatabaseHelper mDatabase;
     //get user lopcation
@@ -144,47 +144,80 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+       // mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        maptype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (maptype.getSelectedItem() == "Satelite") {
+                    mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                  //  startActivity(new Intent(this, MainActivity.class));
+                    Toast.makeText(MainActivity.this, "Satelite", Toast.LENGTH_SHORT).show();
 
+
+                }
+                if (maptype.getSelectedItem() == "Hybride") {
+                    mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    Toast.makeText(MainActivity.this, "Hybride", Toast.LENGTH_SHORT).show();
+                } if(maptype.getSelectedItem() == "Default")
+                {
+                    mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                    Toast.makeText(MainActivity.this, "Terrain", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+
+
+        });
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+                builder1.setMessage("You want to add this place as Favourite?");
+                builder1.setCancelable(true);
+
+                builder1.setPositiveButton(
+                        "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //dialog.cancel();
+                                getAddress(location);
+                            }
+                        });
+
+                builder1.setNegativeButton(
+                        "No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+
+                return true;
+
+            }
+        });
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
 
-                location = new Location("You Will Be Here Soon");
+                 location = new Location("You Will Be Here Soon");
                 location.setLatitude(latLng.latitude);
                 location.setLongitude(latLng.longitude);
                 dest_lat = latLng.latitude;
                 dest_long = latLng.longitude;
-                Toast.makeText(MainActivity.this, "hi", Toast.LENGTH_SHORT).show();
                 setMarker(location);
                 getAddress(location);
 
             }
         });
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(Marker marker) {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//                builder.setTitle("You want to add it as Favourite?");
-//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                        getAddress(location);
-//
-//                    }
-//                });
-//                builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                    }
-//                });
-//                AlertDialog alertDialog = builder.create();
-//                alertDialog.show();
-//                return true;
-//
-//            }
-//        });
+
 
 
 
@@ -203,34 +236,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void getAddress(Location location) {
+        System.out.println("In Get Address");
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
         String addDate = simpleDateFormat.format(calendar.getTime());
         geocoder = new Geocoder(this, Locale.getDefault());
+
+        System.out.println("in geocoder");
         try {
             addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+        } catch (IOException e) {
+            e.printStackTrace();
             if (!addresses.isEmpty()) {
                 address = addresses.get(0).getLocality() + " " + addresses.get(0).getAddressLine(0);
                 System.out.println(addresses.get(0).getAddressLine(0));
 
-
                 if (mDatabase.addFavPlace(addresses.get(0).getLocality(),addDate,addresses.get(0).getAddressLine(0),location.getLatitude(),location.getLongitude())){
-                    Toast.makeText(MainActivity.this, "plce"+addresses.get(0).getAddressLine(0), Toast.LENGTH_SHORT).show();
-                   // System.out.println(mDatabase.getAllPlace().toString());
-                   // loadEmployees();
+                    Toast.makeText(MainActivity.this, "added", Toast.LENGTH_SHORT).show();
+                    loadPlaces();
                 }else {
                     Toast.makeText(MainActivity.this, "Employee is not addaed", Toast.LENGTH_SHORT).show();
                 }
-                // Toast.makeText(this, "Address:"+addresses.get(0).getAddressLine(0), Toast.LENGTH_SHORT).show();
+                 Toast.makeText(this, "Address:"+addresses.get(0).getAddressLine(0), Toast.LENGTH_SHORT).show();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+
         }
 
 
     }
 
     private void setMarker(Location location) {
+        System.out.println("In SetMarker");
         LatLng userlatlong = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions().position(userlatlong).title("Your Destination");
        // markerOptions.draggable(true);
