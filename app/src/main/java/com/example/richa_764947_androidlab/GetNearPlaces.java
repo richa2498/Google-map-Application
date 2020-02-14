@@ -84,23 +84,6 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> implements Go
             options.snippet(vicinity);
 
             mMap.setOnInfoWindowClickListener(this);
-//
-//
-            if (type == "hospital") {
-                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-                mMap.addMarker(options);
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
-
-
-            } else {
-                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-                mMap.addMarker(options);
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
-
-
-            }
 
             switch (type){
 
@@ -111,7 +94,46 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> implements Go
                     mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 
                     break;
+                case "resturent":
+                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                    mMap.addMarker(options);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+                    break;
+                case "museum":
+                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                    mMap.addMarker(options);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+                    break;
+                case "cafe":
+                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                    mMap.addMarker(options);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+                    break;
+                case "library":
+                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    mMap.addMarker(options);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+                    break;
+                case "hospital":
+                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                    mMap.addMarker(options);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+                    break;
                 default:
+                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                    mMap.addMarker(options);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
                      break;
 
 
