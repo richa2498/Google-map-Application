@@ -57,32 +57,42 @@
                     android:onClick="btnClick"
                     android:text="Museums"
                     android:textColor="#fff" />
+                <Button
+                    android:id="@+id/btn_library"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/buttton_default"
+                    android:onClick="btnClick"
+                    android:text="library"
+                    android:textColor="#fff" />
+                <Button
+                    android:id="@+id/btn_school"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/buttton_default"
+                    android:onClick="btnClick"
+                    android:text="school"
+                    android:textColor="#fff" />
 
                 <Button android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/btn_cafe"
                             android:background="@drawable/buttton_default"
                             android:layout_marginRight="5dp"
-                            android:textColor="#FF070707"
+                            android:textColor="#fff"
                             android:text="Cafe"
                             android:onClick="btnClick" />
 
-
-                        <Button android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Button Five" />
-                        <Button android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Button Six" />
-                        <Button android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Button Seven" />
-                        <Button android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Button Eight" />
-                        <Button android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Button Nine" />
+                <Button android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_hospital"
+                    android:background="@drawable/buttton_default"
+                    android:layout_marginRight="5dp"
+                    android:textColor="#fff"
+                    android:text="Hospital"
+                    android:onClick="btnClick" />
 
 
             </LinearLayout>
@@ -106,6 +116,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:background="@drawable/buttton_default"
+            android:onClick="btnClick"
             android:src="@drawable/ic_action_direction"
             android:text="Get Direction"
             android:textColor="#fff" />
@@ -114,6 +125,7 @@
             android:id="@+id/btn_Fav_place"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:onClick="btnClick"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:background="@drawable/buttton_default"

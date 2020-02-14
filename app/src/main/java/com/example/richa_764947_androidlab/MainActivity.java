@@ -57,7 +57,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     GoogleMap mMap;
     double lat, longi, dest_lat, dest_long;
@@ -81,39 +81,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initMap();
-//        maptype = findViewById(R.id.choose_map);
-//        maptype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//
-//                switch (position){
-//                    case 0:
-//                        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-//                       Toast.makeText(MainActivity.this, "Satelite", Toast.LENGTH_SHORT).show();
-//                       break;
-//                    case 1:
-//                        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-//                        Toast.makeText(MainActivity.this, "Terrrain", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    case 2:
-//                        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-//                        Toast.makeText(MainActivity.this, "Hybride", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    default:
-//                        mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-//                        Toast.makeText(MainActivity.this, "none", Toast.LENGTH_SHORT).show();
-//                        break;
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//                mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-//            }
-//
-//
-//        });
+
 
         getUserLocation();
         mDatabase = new DatabaseHelper(this);
@@ -126,8 +94,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
 
-
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.map_type, menu);
@@ -163,56 +131,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-       // mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
-                builder1.setMessage("You want to add this place as Favourite?");
-                builder1.setCancelable(true);
-
-                builder1.setPositiveButton(
-                        "Yes",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //dialog.cancel();
-                                try {
-                                    isMrkerClick = true;
-                                    getAddress(location);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-                builder1.setNegativeButton(
-                        "No",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                                isMrkerClick = false;
-                            }
-                        });
-
-                AlertDialog alert11 = builder1.create();
-                alert11.show();
-
-                return true;
-
-            }
-        });
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 
             @Override
             public void onMapLongClick(LatLng latLng) {
 
-                 location = new Location("You Will Be Here Soon");
+                location = new Location("You Will Be Here Soon");
                 location.setLatitude(latLng.latitude);
                 location.setLongitude(latLng.longitude);
                 dest_lat = latLng.latitude;
                 dest_long = latLng.longitude;
-                setMarker(location);
+                try {
+                    setMarker(location);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 try {
                     getAddress(location);
                 } catch (IOException e) {
@@ -221,9 +155,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         });
-
-
-
+        mMap.setOnInfoWindowClickListener(this);
 
 
     }
@@ -249,31 +181,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         System.out.println("in geocoder");
 
-            addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+        addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 
-            if (!addresses.isEmpty()) {
-                address = addresses.get(0).getLocality() + " " + addresses.get(0).getAddressLine(0);
-                System.out.println(addresses.get(0).getAddressLine(0));
+        if (!addresses.isEmpty()) {
+            address = addresses.get(0).getLocality() + " " + addresses.get(0).getAddressLine(0);
+            System.out.println(addresses.get(0).getAddressLine(0));
 
-                if (isMrkerClick  && mDatabase.addFavPlace(addresses.get(0).getLocality(),addDate,addresses.get(0).getAddressLine(0),location.getLatitude(),location.getLongitude())){
-                    isMrkerClick = false;
-                    Toast.makeText(MainActivity.this, "added", Toast.LENGTH_SHORT).show();
-                    loadPlaces();
-                }else {
-                   // Toast.makeText(MainActivity.this, "Employee is not addaed", Toast.LENGTH_SHORT).show();
-                }
-                 //Toast.makeText(this, "Address:"+addresses.get(0).getAddressLine(0), Toast.LENGTH_SHORT).show();
-            }
-
-
+            //Toast.makeText(MainActivity.this, "Employee is not addaed", Toast.LENGTH_SHORT).show();
         }
+        //Toast.makeText(this, "Address:"+addresses.get(0).getAddressLine(0), Toast.LENGTH_SHORT).show();
+    }
 
 
-
-    private void setMarker(Location location) {
+    private void setMarker(Location location) throws IOException {
         System.out.println("In SetMarker");
+        geocoder = new Geocoder(this, Locale.getDefault());
+        addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
         LatLng userlatlong = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions().position(userlatlong).title("Your Destination");
+        if (!addresses.isEmpty()) {
+            address = addresses.get(0).getLocality() + " " + addresses.get(0).getAddressLine(0);
+            System.out.println(addresses.get(0).getAddressLine(0));
+        }
+        MarkerOptions markerOptions = new MarkerOptions().position(userlatlong).title(addresses.get(0).getLocality());
+        markerOptions.snippet(addresses.get(0).getAddressLine(0));
         markerOptions.draggable(true);
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         mMap.addMarker(markerOptions);
@@ -293,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void btnClick(View view) {
         Object[] dataTransfer = new Object[3];
-        GetNearPlaces getNearByPlaceData = new GetNearPlaces();
+        GetNearPlaces getNearByPlaceData = new GetNearPlaces(this);
         switch (view.getId()) {
 
             case R.id.btn_restaurants:
@@ -317,25 +247,43 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(this, "museum", Toast.LENGTH_SHORT).show();
                 break;
 
-            case R.id.btn_cafe:
+
+
+            case  R.id.btn_cafe:
+                 mMap.clear();
+                url = getUrl(lat, longi, "cafe");
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+                dataTransfer[2] = "cafe";
+                getNearByPlaceData.execute(dataTransfer);
+                Toast.makeText(this, "cafe", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.btn_library:
+                mMap.clear();
+                url = getUrl(lat, longi, "library");
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+                dataTransfer[2] = "library";
+                getNearByPlaceData.execute(dataTransfer);
+                Toast.makeText(this, "library", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.btn_Fav_place:
 
                 Intent intent = new Intent(this, FavPlaces.class);
                 startActivity(intent);
+                break;
+
+            case R.id.btn_duration:
+                Intent intent2 = new Intent(this, DurationAndDistance.class);
+                startActivity(intent2);
+                break;
 
         }
     }
 
 
-    private String getDistanceURL() {
-        //https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood&key=
-        StringBuilder placeurl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
-        placeurl.append("origin=" + lat + "," + longi);
-        placeurl.append("&destination=" + dest_lat + "," + dest_long);
-        // placeurl.append("&type:"+nearplace);
-        // placeurl.append("&key=AIzaSyCJzqczAn4CG-wEgdlbdAbIxeHGta012rI");
-
-        return placeurl.toString();
-    }
 
     private String getUrl(double lat, double longi, String nearplace) {
 
@@ -343,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         placeurl.append("location=" + lat + "," + longi);
         placeurl.append("&radius=" + radious);
         placeurl.append("&type:" + nearplace);
-        placeurl.append("&key=AIzaSyDMSqImPXApQdSZ43EqemUgq2m1U_GfYok");
+        placeurl.append("&key=");
         // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=43.647845,-79.3888367&radius=1000$typerestaurant&key=AIzaSyDK2Du7rvxW4d4NQmKg8qAyxaZ0dGgaY5k
         System.out.println(placeurl.toString());
         return placeurl.toString();
@@ -362,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     CameraPosition cameraPosition = CameraPosition.builder().target(userLoaction).zoom(15).bearing(0).tilt(45).build();
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                    mMap.addMarker(new MarkerOptions().position(userLoaction).title("Your Location").icon(bitmapDescriptorFromVector(getApplicationContext(), R.drawable.map)));
+                    mMap.addMarker(new MarkerOptions().position(userLoaction).title("Your Destination").icon(bitmapDescriptorFromVector(getApplicationContext(), R.drawable.map)));
                 }
             }
         };
@@ -372,27 +320,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.maptypeHYBRID:
-                if(mMap != null){
+                if (mMap != null) {
                     mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                     return true;
                 }
             case R.id.maptypeNONE:
-                if(mMap != null){
+                if (mMap != null) {
                     mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
                     return true;
                 }
             case R.id.maptypeNORMAL:
-                if(mMap != null){
+                if (mMap != null) {
                     mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                     return true;
                 }
             case R.id.maptypeSATELLITE:
-                if(mMap != null){
+                if (mMap != null) {
                     mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
                     return true;
                 }
             case R.id.maptypeTERRAIN:
-                if(mMap != null){
+                if (mMap != null) {
                     mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                     return true;
                 }
@@ -404,22 +352,70 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-
     private void loadPlaces() {
         Cursor cursor = mDatabase.getAllPlace();
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
 
             do {
                 System.out.println(cursor.getString(1));
 
 
-
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
 
             cursor.close();
         }
 
     }
 
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        System.out.println("MARKER: "+ marker.getTitle());
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage("You want to add this place as Favourite?");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //dialog.cancel();
+
+                        // getAddress(location);
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String addDate = simpleDateFormat.format(calendar.getTime());
+        if ( mDatabase.addFavPlace(marker.getTitle(), addDate, marker.getSnippet(), marker.getPosition().latitude, marker.getPosition().longitude)) {
+
+            System.out.println("printed");
+            //Toast.makeText(, "added", Toast.LENGTH_SHORT).show();
+
+        } else {
+            System.out.println("cant add");
+
+        }
+
     }
+    }
+
+
+
+
+
 

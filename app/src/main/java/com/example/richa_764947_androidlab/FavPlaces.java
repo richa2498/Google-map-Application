@@ -84,7 +84,8 @@ public class FavPlaces extends AppCompatActivity {
                         break;
                     case 1:
                         // delete
-                        if(mDatabase.deletePlace(position)) {
+
+                        if(mDatabase.deletePlace(places.get(position).id)) {
                             Toast.makeText(FavPlaces.this, "case 1", Toast.LENGTH_SHORT).show();
                             loadPlaces();
                         }else {

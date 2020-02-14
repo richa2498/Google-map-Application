@@ -1,5 +1,10 @@
 package com.example.richa_764947_androidlab;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -16,14 +21,20 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-public class GetNearPlaces extends AsyncTask<Object,String,String> {
+public class GetNearPlaces extends AsyncTask<Object,String,String> implements GoogleMap.OnInfoWindowClickListener {
 
+    Context context;
     String placeData;
-
+    List<Address> addresses;
+    String address;
+    Geocoder geocoder;
     DatabaseHelper mDatabase;
     GoogleMap mMap;
     String locationUrl;
 
+    public GetNearPlaces(Context context) {
+        this.context = context;
+    }
 
     @Override
     protected String doInBackground(Object... objects) {
@@ -61,30 +72,17 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> {
             final double lat = Double.parseDouble(mapPlace.get("lat"));
             final double longi = Double.parseDouble(mapPlace.get("lng"));
 
+
             LatLng latLng = new LatLng(lat,longi);
             options.position(latLng);
 
-            options.title(name+":"+vicinity);
+            options.title(name);
+            options.snippet(vicinity);
 
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-                    String addDate = simpleDateFormat.format(calendar.getTime());
-
-                    if ( mDatabase.addFavPlace(name, addDate, vicinity, lat, longi)) {
-
-                        System.out.println("printed");
-                        //Toast.makeText(, "added", Toast.LENGTH_SHORT).show();
-
-                    } else {
-
-                    }
-                    return true;
-                }
-            });
-            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+            mMap.setOnInfoWindowClickListener(this);
+//
+//
+            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
             mMap.addMarker(options);
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
@@ -92,5 +90,51 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> {
 
 
         }
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        System.out.println("MARKER: "+ marker.getTitle());
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+        builder1.setMessage("You want to add this place as Favourite?");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //dialog.cancel();
+
+                        // getAddress(location);
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+
+mDatabase = new DatabaseHelper(context);
+
+        Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+                    String addDate = simpleDateFormat.format(calendar.getTime());
+                    if ( mDatabase.addFavPlace(marker.getTitle(), addDate, marker.getSnippet(), marker.getPosition().latitude, marker.getPosition().longitude)) {
+
+                        System.out.println("printed");
+                        //Toast.makeText(, "added", Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        System.out.println("cant add");
+
+                    }
+
     }
 }

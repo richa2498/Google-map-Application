@@ -13,7 +13,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/tv_placename"
             android:layout_marginBottom="5dp"
+            android:textColor="@color/colorPrimaryDark"
             android:layout_marginTop="10dp"
+            android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
         <TextView
             android:layout_width="match_parent"

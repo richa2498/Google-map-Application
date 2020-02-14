@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">Richa_764947_AndroidLab</string>
-    <string name="api_key"> AIzaSyBRoz9ihKsgX7s5wvjT5aDyiG-Zko9_xWE</string>
-    AIzaSyBRoz9ihKsgX7s5wvjT5aDyiG-Zko9_xWE
+    <string name="api_key"></string>
+
     <string-array name="mapType">
         <item>Satelite</item>
         <item>Default</item>
         <item>Hybride</item>
     </string-array>
+    <string name="title_activity_distance_and_duration">Map</string>
 
 </resources>
