@@ -90,14 +90,29 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> implements Go
                 options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
                 mMap.addMarker(options);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 
 
             } else {
                 options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
                 mMap.addMarker(options);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+
+            }
+
+            switch (type){
+
+                case "school":
+                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                    mMap.addMarker(options);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+                    break;
+                default:
+                     break;
 
 
             }

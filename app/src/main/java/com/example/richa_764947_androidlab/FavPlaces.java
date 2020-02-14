@@ -90,7 +90,10 @@ public class FavPlaces extends AppCompatActivity {
                         intent.putExtra("longi",places.get(position).latitude);
                         intent.putExtra("edit",true);
                         startActivity(intent);
-                       // adapter.setNotifyOnChange();
+                        places.clear();
+
+                        swipeMenuListView.setAdapter(adapter);
+                        loadPlaces();
 
                         break;
                     case 1:
@@ -135,6 +138,8 @@ public class FavPlaces extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        places.clear();
+        swipeMenuListView.setAdapter(adapter);
         loadPlaces();
     }
 

@@ -303,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             case R.id.btn_direction:
                 Intent intent2 = new Intent(this, DurationAndDistance.class);
+                intent2.putExtra("isMain",true);
                 startActivity(intent2);
                 break;
 

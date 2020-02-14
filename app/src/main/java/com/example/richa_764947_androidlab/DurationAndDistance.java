@@ -60,7 +60,7 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
     Location homelocation;
     List<Location> points;
     DatabaseHelper mDatabase;
-    boolean isDrag;
+    boolean isDrag,isMain;
     public static boolean directionRequested;
     private FusedLocationProviderClient fusedLocationProviderClient;
     LocationCallback locationCallback;
@@ -89,6 +89,7 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
         dest_long = intent.getDoubleExtra("longi",6);
         isDrag = intent.getBooleanExtra("edit",false);
 
+        isMain = intent.getBooleanExtra("isMain",false);
 
     }
 
@@ -133,6 +134,11 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
 
 
         }
+            if (isMain)
+            {
+                Button b1 = findViewById(R.id.btn_visited);
+                b1.setVisibility(View.GONE);
+            }
         if (isDrag){
            Button b1 = findViewById(R.id.btn_visited);
             b1.setVisibility(View.VISIBLE);
@@ -313,6 +319,7 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
                     directionRequested = false;
                 else
                     directionRequested = true;
+                points.clear();
                 break;
 
         }
