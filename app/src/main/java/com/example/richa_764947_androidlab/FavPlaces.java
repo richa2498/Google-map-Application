@@ -70,7 +70,7 @@ public class FavPlaces extends AppCompatActivity {
                 // set item width
                 deleteItem.setWidth(300);
                 // set a icon
-                deleteItem.setIcon(R.drawable.ic_action_name);
+                deleteItem.setIcon(R.drawable.ic_action_delete);
                 // add to menu
                 menu.addMenuItem(deleteItem);
             }
@@ -90,16 +90,19 @@ public class FavPlaces extends AppCompatActivity {
                         intent.putExtra("longi",places.get(position).latitude);
                         intent.putExtra("edit",true);
                         startActivity(intent);
-                        adapter.setNotifyOnChange();
+                       // adapter.setNotifyOnChange();
 
                         break;
                     case 1:
                         // delete
 
+                        Toast.makeText(FavPlaces.this, "case 1"+places.get(position).id, Toast.LENGTH_SHORT).show();
+
                         if(mDatabase.deletePlace(places.get(position).id)) {
                             Toast.makeText(FavPlaces.this, "case 1", Toast.LENGTH_SHORT).show();
                            // swipeMenuListView.deferNotifyDataSetChanged();
-
+                            places.remove(places.get(position));
+                            swipeMenuListView.setAdapter(adapter);
                             loadPlaces();
 
                          }else {
@@ -115,6 +118,8 @@ public class FavPlaces extends AppCompatActivity {
         });swipeMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(FavPlaces.this, "case 1"+places.get(position).id, Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(FavPlaces.this, DurationAndDistance.class);
                 intent.putExtra("id",places.get(position).id);
                 intent.putExtra("lat",places.get(position).longitude);
@@ -128,6 +133,12 @@ public class FavPlaces extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        loadPlaces();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -135,6 +146,7 @@ public class FavPlaces extends AppCompatActivity {
     }
 
     private void loadPlaces() {
+
         places.clear();
         Cursor cursor = mDatabase.getAllPlace();
         if (cursor.moveToFirst()) {
@@ -144,7 +156,7 @@ public class FavPlaces extends AppCompatActivity {
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getDouble(4),
-                        cursor.getDouble(5)));
+                        cursor.getDouble(5),cursor.getInt(6)));
 
 
             } while (cursor.moveToNext());

@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TabHost;
 import android.widget.Toast;
 
@@ -59,12 +60,13 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
     Location homelocation;
     List<Location> points;
     DatabaseHelper mDatabase;
-boolean isDrag;
+    boolean isDrag;
     public static boolean directionRequested;
     private FusedLocationProviderClient fusedLocationProviderClient;
     LocationCallback locationCallback;
     LocationRequest locationRequest;
     int id;
+    int plcaevisit = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,7 @@ boolean isDrag;
         dest_long = intent.getDoubleExtra("longi",6);
         isDrag = intent.getBooleanExtra("edit",false);
 
+
     }
 
     @Override
@@ -99,11 +102,6 @@ boolean isDrag;
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.duration_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 
 
     private boolean checkPermission() {
@@ -131,10 +129,15 @@ boolean isDrag;
                 LatLng userlatlong = new LatLng(dest_lat, dest_long);
                 MarkerOptions markerOptions = new MarkerOptions().position(userlatlong).title("Your Destination").snippet("you are going there").draggable(isDrag).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
                 mMap.addMarker(markerOptions);
-                Toast.makeText(DurationAndDistance.this, "lat"+dest_lat+"longi"+dest_long, Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(DurationAndDistance.this, "lat"+dest_lat+"longi"+dest_long, Toast.LENGTH_SHORT).show();
 
 
         }
+        if (isDrag){
+           Button b1 = findViewById(R.id.btn_visited);
+            b1.setVisibility(View.VISIBLE);
+        }
+
             mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                 @Override
                 public void onMarkerDragStart(Marker marker) {
@@ -160,7 +163,7 @@ boolean isDrag;
                         if (!addresses.isEmpty()) {
                           String  address = addresses.get(0).getLocality() + " " + addresses.get(0).getAddressLine(0);
                             System.out.println(addresses.get(0).getAddressLine(0));
-                            if  (mDatabase.updatePlace(id,addresses.get(0).getLocality(),marker.getPosition().longitude,addresses.get(0).getAddressLine(0),marker.getPosition().latitude)){
+                            if  (mDatabase.updatePlace(id,addresses.get(0).getLocality(),marker.getPosition().longitude,addresses.get(0).getAddressLine(0),marker.getPosition().latitude,plcaevisit)){
                                 Toast.makeText(DurationAndDistance.this, "addres;"+marker.getPosition().latitude, Toast.LENGTH_SHORT).show();
                             }
 
@@ -335,6 +338,16 @@ boolean isDrag;
 
         AlertDialog alert11 = builder1.create();
         alert11.show();
+
+    }
+
+    public void placeVisited(View view) {
+      plcaevisit = 1;
+      if(mDatabase.updateVisit(id,plcaevisit)){
+          Toast.makeText(DurationAndDistance.this, "Place Visited", Toast.LENGTH_SHORT).show();
+          System.out.println("id:"+id+"visited"+plcaevisit);
+
+      }
 
     }
 }

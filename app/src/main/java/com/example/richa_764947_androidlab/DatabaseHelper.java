@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_DATE = "date";
     private static final String COLUMN_LATITUDE = "lat";
     private static final String COLUMN_LONGITUDE = "lng";
-
+    private static final String COLUMN_ISVISITED = "isVisited";
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -39,7 +39,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_ADDRESS + " varchar(200), " +
                 COLUMN_DATE + " varchar(200) NOT NULL, " +
                 COLUMN_LATITUDE + " double NOT NULL, " +
-                COLUMN_LONGITUDE + " double NOT NULL); ";
+                COLUMN_LONGITUDE + " double NOT NULL," +
+                COLUMN_ISVISITED + " INTEGER NOT NULL); ";
         db.execSQL(sql);
 
     }
@@ -67,6 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_ADDRESS,address);
         cv.put(COLUMN_LATITUDE,lng);
         cv.put(COLUMN_LONGITUDE,lat);
+        cv.put(COLUMN_ISVISITED,0);
         //insert returns vallue of rownumber and -1 is not sucessfull ;
 
         return  sqLiteDatabase.insert(TABLE_NAME,null,cv)!= 1;
@@ -78,7 +80,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.rawQuery("SELECT * FROM "+TABLE_NAME,null);
 
     }
-    boolean updatePlace(int id,String name,double lat,String address,double lng){
+    boolean updatePlace(int id,String name,double lat,String address,double lng,int isvisited){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
 
         ContentValues cv = new ContentValues();
@@ -88,6 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_ADDRESS,address);
         cv.put(COLUMN_LATITUDE,lat);
         cv.put(COLUMN_LONGITUDE,lng);
+        cv.put(COLUMN_ISVISITED,isvisited);
 
         //returns the affected num of rows;
         return  sqLiteDatabase.update(TABLE_NAME,cv,COLUMN_ID+" = ? ",new String[]{String.valueOf(id)}) >0 ;
@@ -99,6 +102,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return  sqLiteDatabase.delete(TABLE_NAME,COLUMN_ID+" = ? ",new String[]{String.valueOf(id)}) >0;
 
     }
+    boolean updateVisit(int id,int isvisited){
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        //this first argument of the put method is the columnn name and second value
+
+        cv.put(COLUMN_ISVISITED,isvisited);
+
+        //returns the affected num of rows;
+        return  sqLiteDatabase.update(TABLE_NAME,cv,COLUMN_ID+" = ? ",new String[]{String.valueOf(id)}) >0 ;
+    }
+
 
 
 void delALL(){

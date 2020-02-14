@@ -48,6 +48,23 @@
 
 
     </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <Button
+            android:id="@+id/btn_visited"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@drawable/buttton_default"
+            android:onClick="placeVisited"
+            android:text="Visit Place"
+            android:textColor="#fff" />
+
+
+    </LinearLayout>
 
 
 </LinearLayout>

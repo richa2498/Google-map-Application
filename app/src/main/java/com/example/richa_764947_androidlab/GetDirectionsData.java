@@ -1,9 +1,13 @@
 package com.example.richa_764947_androidlab;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -13,6 +17,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class GetDirectionsData extends AsyncTask<Object, String, String> {
@@ -20,11 +26,13 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
     String googleDirectionsData;
     GoogleMap mMap;
     String url;
-
+    Context context;
     String distance;
     String duration;
 
     LatLng latLng,l;
+
+
 
     @Override
     protected String doInBackground(Object... objects) {
@@ -78,13 +86,15 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
     private void displayDirections(String[] directionsList) {
         int count = directionsList.length;
-        for (int i = 0; i < count; i++) {
-            PolylineOptions options = new PolylineOptions()
-                    .color(Color.BLACK)
-                    .width(20)
-                    .addAll(PolyUtil.decode(directionsList[i]));
-            mMap.addPolyline(options);
-        }
+
+            for (int i = 0; i < count; i++) {
+                PolylineOptions options = new PolylineOptions()
+                        .color(Color.BLACK)
+                        .width(20)
+                        .addAll(PolyUtil.decode(directionsList[i]));
+                mMap.addPolyline(options);
+            }
+
     }
 
 

@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     String address;
     boolean isOk;
     Geocoder geocoder;
-    Spinner maptype;
     Location location;
     boolean isMrkerClick = false;
     Marker mMarker;
@@ -270,6 +269,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getNearByPlaceData.execute(dataTransfer);
                 Toast.makeText(this, "library", Toast.LENGTH_SHORT).show();
                 break;
+
+            case R.id.btn_clear:
+                mMap.clear();
+                break;
+
 
             case R.id.btn_Fav_place:
 
