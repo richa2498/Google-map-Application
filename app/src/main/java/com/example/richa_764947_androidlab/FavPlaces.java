@@ -2,10 +2,13 @@ package com.example.richa_764947_androidlab;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -20,9 +23,10 @@ import java.util.List;
 public class FavPlaces extends AppCompatActivity {
 
     DatabaseHelper mDatabase;
-    ArrayList<String> list ;
+
     List<FavouritePlace> places;
     SwipeMenuListView swipeMenuListView;
+    FavPlaceAdapter adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +38,7 @@ public class FavPlaces extends AppCompatActivity {
          loadPlaces();
 
 
-        FavPlaceAdapter adapter = new FavPlaceAdapter(this,R.layout.fav_place_cell_layout,places,mDatabase);
+       adapter = new FavPlaceAdapter(this,R.layout.fav_place_cell_layout,places,mDatabase);
         swipeMenuListView.setAdapter(adapter);
         SwipeMenuCreator creator = new SwipeMenuCreator() {
 
@@ -49,7 +53,7 @@ public class FavPlaces extends AppCompatActivity {
                 // set item width
                 openItem.setWidth(250);
                 // set item title
-                openItem.setTitle("Open");
+                openItem.setTitle("Update Location");
                 // set item title fontsize
                 openItem.setTitleSize(18);
                 // set item title font color
@@ -80,29 +84,58 @@ public class FavPlaces extends AppCompatActivity {
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 switch (index) {
                     case 0:
-                        Toast.makeText(FavPlaces.this, "case 0", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(FavPlaces.this, DurationAndDistance.class);
+                        intent.putExtra("id",places.get(position).id);
+                        intent.putExtra("lat",places.get(position).longitude);
+                        intent.putExtra("longi",places.get(position).latitude);
+                        intent.putExtra("edit",true);
+                        startActivity(intent);
+                        adapter.setNotifyOnChange();
+
                         break;
                     case 1:
                         // delete
 
                         if(mDatabase.deletePlace(places.get(position).id)) {
                             Toast.makeText(FavPlaces.this, "case 1", Toast.LENGTH_SHORT).show();
+                           // swipeMenuListView.deferNotifyDataSetChanged();
+
                             loadPlaces();
-                        }else {
+
+                         }else {
                             Toast.makeText(FavPlaces.this, ""+mDatabase.deletePlace(position), Toast.LENGTH_SHORT).show();
                         }
-                      //  loadPlaces();
+                        loadPlaces();
                         break;
                 }
                 // false : close the menu; true : not close the menu
                 return false;
             }
+
+        });swipeMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(FavPlaces.this, DurationAndDistance.class);
+                intent.putExtra("id",places.get(position).id);
+                intent.putExtra("lat",places.get(position).longitude);
+                intent.putExtra("longi",places.get(position).latitude);
+                startActivity(intent);
+            }
         });
+
 
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        loadPlaces();
+    }
+
     private void loadPlaces() {
+        places.clear();
         Cursor cursor = mDatabase.getAllPlace();
         if (cursor.moveToFirst()) {
 
@@ -117,7 +150,15 @@ public class FavPlaces extends AppCompatActivity {
             } while (cursor.moveToNext());
 
             cursor.close();
+
         }
+        if (adapter != null)
+        {
+            loadPlaces();
+            swipeMenuListView.setAdapter(adapter);
+        }
+        
+
 
     }
 

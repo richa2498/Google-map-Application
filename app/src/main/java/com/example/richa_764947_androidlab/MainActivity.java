@@ -64,10 +64,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     final int radious = 1000;
     List<Address> addresses;
     String address;
+    boolean isOk;
     Geocoder geocoder;
     Spinner maptype;
     Location location;
     boolean isMrkerClick = false;
+    Marker mMarker;
 
     DatabaseHelper mDatabase;
     //get user lopcation
@@ -275,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(intent);
                 break;
 
-            case R.id.btn_duration:
+            case R.id.btn_direction:
                 Intent intent2 = new Intent(this, DurationAndDistance.class);
                 startActivity(intent2);
                 break;
@@ -291,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         placeurl.append("location=" + lat + "," + longi);
         placeurl.append("&radius=" + radious);
         placeurl.append("&type:" + nearplace);
-        placeurl.append("&key=");
+        placeurl.append("&key=AIzaSyAflP7DoztMVPCGgXuNdx_9WKDBplGYzXE");
         // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=43.647845,-79.3888367&radius=1000$typerestaurant&key=AIzaSyDK2Du7rvxW4d4NQmKg8qAyxaZ0dGgaY5k
         System.out.println(placeurl.toString());
         return placeurl.toString();
@@ -374,43 +376,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setMessage("You want to add this place as Favourite?");
         builder1.setCancelable(true);
-
+        mMarker = marker;
         builder1.setPositiveButton(
                 "Yes",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //dialog.cancel();
+                        isOk = true;
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+                        String addDate = simpleDateFormat.format(calendar.getTime());
+                        if (isOk && mDatabase.addFavPlace(mMarker.getTitle(), addDate, mMarker.getSnippet(), mMarker.getPosition().latitude, mMarker.getPosition().longitude)) {
+                            Toast.makeText(MainActivity.this, "hi!", Toast.LENGTH_SHORT).show();
+                            isOk = false;
 
-                        // getAddress(location);
+                        }
+                        //Toast.makeText(MainActivity.this, "Place Added As Favourite!", Toast.LENGTH_SHORT).show();
+
                     }
                 });
+        builder1.setNegativeButton("no", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-        builder1.setNegativeButton(
-                "No",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-
-                    }
-                });
+            }
+        });
 
         AlertDialog alert11 = builder1.create();
         alert11.show();
-
-
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        String addDate = simpleDateFormat.format(calendar.getTime());
-        if ( mDatabase.addFavPlace(marker.getTitle(), addDate, marker.getSnippet(), marker.getPosition().latitude, marker.getPosition().longitude)) {
-
-            System.out.println("printed");
-            //Toast.makeText(, "added", Toast.LENGTH_SHORT).show();
-
-        } else {
-            System.out.println("cant add");
-
-        }
-
     }
     }
 

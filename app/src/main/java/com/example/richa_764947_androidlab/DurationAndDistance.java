@@ -7,11 +7,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
@@ -19,6 +24,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -34,13 +41,16 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DurationAndDistance extends AppCompatActivity implements OnMapReadyCallback {
+public class DurationAndDistance extends AppCompatActivity implements OnMapReadyCallback, Serializable {
 
     GoogleMap mMap;
     double lat, longi, dest_lat, dest_long;
@@ -48,11 +58,13 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
     boolean isclicked = false;
     Location homelocation;
     List<Location> points;
-
+    DatabaseHelper mDatabase;
+boolean isDrag;
     public static boolean directionRequested;
     private FusedLocationProviderClient fusedLocationProviderClient;
     LocationCallback locationCallback;
     LocationRequest locationRequest;
+    int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +72,7 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
         setContentView(R.layout.activity_duration_and_distance);
         initMap();
         getUserLocation();
+        mDatabase = new DatabaseHelper(this);
         points = new ArrayList<>();
 
         if (!checkPermission()) {
@@ -68,6 +81,12 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
             //getUserLocation();
         }
+        Intent intent = getIntent();
+        id = intent.getIntExtra("id",-1);
+        dest_lat = intent.getDoubleExtra("lat",6);
+        dest_long = intent.getDoubleExtra("longi",6);
+        isDrag = intent.getBooleanExtra("edit",false);
+
     }
 
     @Override
@@ -105,13 +124,64 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        // mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+            if (id!= -1){
+                Button b1 = findViewById(R.id.btn_chhose);
+                b1.setVisibility(View.GONE);
+                LatLng userlatlong = new LatLng(dest_lat, dest_long);
+                MarkerOptions markerOptions = new MarkerOptions().position(userlatlong).title("Your Destination").snippet("you are going there").draggable(isDrag).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                mMap.addMarker(markerOptions);
+                Toast.makeText(DurationAndDistance.this, "lat"+dest_lat+"longi"+dest_long, Toast.LENGTH_SHORT).show();
+
+
+        }
+            mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+
+
+                }
+
+                @Override
+                public void onMarkerDrag(Marker marker) {
+
+                }
+
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+                    Geocoder geocoder = new Geocoder(DurationAndDistance.this);
+                    List<Address> addresses = new ArrayList<>();
+                    LatLng latLng = marker.getPosition();
+
+                    try {
+                        addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+
+
+                        if (!addresses.isEmpty()) {
+                          String  address = addresses.get(0).getLocality() + " " + addresses.get(0).getAddressLine(0);
+                            System.out.println(addresses.get(0).getAddressLine(0));
+                            if  (mDatabase.updatePlace(id,addresses.get(0).getLocality(),marker.getPosition().longitude,addresses.get(0).getAddressLine(0),marker.getPosition().latitude)){
+                                Toast.makeText(DurationAndDistance.this, "addres;"+marker.getPosition().latitude, Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                  //  mDatabase.updatePlace(id,marker.getTitle(),marker.getPosition().latitude,marker.getSnippet(),marker.getPosition().longitude);
+
+                }
+            });
+
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
 
                 if (points.size() == 2) {
                     mMap.clear();
+                    points.clear();
                 }
 
 
@@ -141,7 +211,7 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
 
     private void setMarker(Location location) {
         LatLng userlatlong = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions().position(userlatlong).title("Your Destination").snippet("you are going there").draggable(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+        MarkerOptions markerOptions = new MarkerOptions().position(userlatlong).title("Your Destination").snippet("you are going there").draggable(isDrag).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         mMap.addMarker(markerOptions);
 
     }
@@ -200,7 +270,7 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
         StringBuilder googleDirectionUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
         googleDirectionUrl.append("origin=" + lat + "," + longi);
         googleDirectionUrl.append("&destination=" + dest_lat + "," + dest_long);
-        googleDirectionUrl.append("&key=");
+        googleDirectionUrl.append("&key=AIzaSyBpM1toUgAErosQZ1FjQ691naNTDznGkBE");
         Log.d("", "getDirectionUrl: " + googleDirectionUrl);
         System.out.println(googleDirectionUrl.toString());
         return googleDirectionUrl.toString();
@@ -225,7 +295,6 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
                     url = getDirectionUrl();
                     dataTransfer[0] = mMap;
                     dataTransfer[1] = url;
-                    System.out.println("richa ");
                     dataTransfer[2] = new LatLng(points.get(0).getLatitude(), points.get(0).getLongitude());
                     dataTransfer[3] = new LatLng(points.get(1).getLatitude(), points.get(1).getLongitude());
                 } else {
@@ -237,46 +306,35 @@ public class DurationAndDistance extends AppCompatActivity implements OnMapReady
                 }
                 GetDirectionsData getDirectionsData = new GetDirectionsData();
                 getDirectionsData.execute(dataTransfer);
-                break;
-            case R.id.btn_direction:
-                dataTransfer = new Object[4];
-
-
-                if (isclicked) {
-                    lat = points.get(0).getLatitude();
-                    longi = points.get(0).getLongitude();
-                    dest_long = points.get(1).getLongitude();
-                    dest_lat = points.get(1).getLatitude();
-                    url = getDirectionUrl();
-                    dataTransfer[0] = mMap;
-                    dataTransfer[1] = url;
-                    System.out.println("richa ");
-                    dataTransfer[2] = new LatLng(points.get(0).getLatitude(), points.get(0).getLongitude());
-                    dataTransfer[3] = new LatLng(points.get(1).getLatitude(), points.get(1).getLongitude());
-
-                } else {
-                    System.out.println("not clicked");
-                    url = getDirectionUrl();
-                    dataTransfer[0] = mMap;
-                    dataTransfer[1] = url;
-                    dataTransfer[2] = new LatLng(dest_lat, dest_long);
-                    dataTransfer[3] = new LatLng(homelocation.getLatitude(), homelocation.getLongitude());
-                }
-                getDirectionsData = new GetDirectionsData();
-                // execute asynchronously
-                getDirectionsData.execute(dataTransfer);
-                System.out.println("get direction data");
                 if (view.getId() == R.id.btn_direction)
-                    directionRequested = true;
-                else
                     directionRequested = false;
+                else
+                    directionRequested = true;
                 break;
+
         }
     }
 
     public void onClick(View view) {
-        isclicked = true;
         mMap.clear();
+        isclicked = true;
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setTitle("HELP!!!");
+        builder1.setMessage("First create Two points On the map after that click on he direction button to get direction..");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
 
     }
 }

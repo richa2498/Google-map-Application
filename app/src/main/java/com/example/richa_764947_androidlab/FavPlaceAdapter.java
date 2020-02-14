@@ -1,6 +1,7 @@
 package com.example.richa_764947_androidlab;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,9 +44,35 @@ public class FavPlaceAdapter extends ArrayAdapter {
         date.setText(place.getDate());
 
 
-
         return view;
 
     }
 
+
+    private void loadPlaces() {
+        Cursor cursor = mdatabase.getAllPlace();
+        if (cursor.moveToFirst()) {
+
+            do {
+                favouritePlaces.add(new FavouritePlace(cursor.getInt(0), cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getDouble(4),
+                        cursor.getDouble(5)));
+
+
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+
+
+    }
+
+    public void setNotifyOnChange() {
+        //favouritePlaces = null;
+        loadPlaces();
+    }
 }

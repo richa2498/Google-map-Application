@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class GetNearPlaces extends AsyncTask<Object,String,String> implements GoogleMap.OnInfoWindowClickListener {
 
     Context context;
@@ -31,6 +32,7 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> implements Go
     DatabaseHelper mDatabase;
     GoogleMap mMap;
     String locationUrl;
+    Marker mMarker;
 
     public GetNearPlaces(Context context) {
         this.context = context;
@@ -98,14 +100,22 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> implements Go
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setMessage("You want to add this place as Favourite?");
         builder1.setCancelable(true);
+        mMarker = marker;
 
+        mDatabase = new DatabaseHelper(context);
         builder1.setPositiveButton(
                 "Yes",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //dialog.cancel();
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+                        String addDate = simpleDateFormat.format(calendar.getTime());
+                        if ( mDatabase.addFavPlace(mMarker.getTitle(), addDate, mMarker.getSnippet(), mMarker.getPosition().latitude, mMarker.getPosition().longitude)) {
 
-                        // getAddress(location);
+                            System.out.println("printed");
+                            Toast.makeText(context, "added", Toast.LENGTH_SHORT).show();
+
+                        }
                     }
                 });
 
@@ -121,20 +131,8 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> implements Go
         AlertDialog alert11 = builder1.create();
         alert11.show();
 
-mDatabase = new DatabaseHelper(context);
 
-        Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-                    String addDate = simpleDateFormat.format(calendar.getTime());
-                    if ( mDatabase.addFavPlace(marker.getTitle(), addDate, marker.getSnippet(), marker.getPosition().latitude, marker.getPosition().longitude)) {
 
-                        System.out.println("printed");
-                        //Toast.makeText(, "added", Toast.LENGTH_SHORT).show();
-
-                    } else {
-                        System.out.println("cant add");
-
-                    }
 
     }
 }
