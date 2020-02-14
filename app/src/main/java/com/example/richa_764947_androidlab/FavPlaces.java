@@ -51,7 +51,7 @@ public class FavPlaces extends AppCompatActivity {
                 openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
                         0xCE)));
                 // set item width
-                openItem.setWidth(250);
+                openItem.setWidth(300);
                 // set item title
                 openItem.setTitle("Update Location");
                 // set item title fontsize
@@ -68,7 +68,7 @@ public class FavPlaces extends AppCompatActivity {
                 deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
                         0x3F, 0x25)));
                 // set item width
-                deleteItem.setWidth(250);
+                deleteItem.setWidth(300);
                 // set a icon
                 deleteItem.setIcon(R.drawable.ic_action_name);
                 // add to menu
@@ -152,13 +152,6 @@ public class FavPlaces extends AppCompatActivity {
             cursor.close();
 
         }
-        if (adapter != null)
-        {
-            loadPlaces();
-            swipeMenuListView.setAdapter(adapter);
-        }
-        
-
 
     }
 
