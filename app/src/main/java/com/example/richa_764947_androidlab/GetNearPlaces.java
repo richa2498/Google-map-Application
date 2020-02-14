@@ -25,6 +25,7 @@ import java.util.List;
 public class GetNearPlaces extends AsyncTask<Object,String,String> implements GoogleMap.OnInfoWindowClickListener {
 
     Context context;
+    String type;
     String placeData;
     List<Address> addresses;
     String address;
@@ -42,6 +43,7 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> implements Go
     protected String doInBackground(Object... objects) {
         mMap = (GoogleMap) objects[0];
         locationUrl = (String) objects[1];
+        type = (String)objects[2];
 
         GetURL getURL = new GetURL();
         try {
@@ -64,10 +66,10 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> implements Go
        showNearByPlace(naerbyplaceList);
     }
 
-    private void showNearByPlace(List<HashMap<String,String>> nearPlacesList){
-        for (int i = 0;i<nearPlacesList.size();i++){
+    private void showNearByPlace(List<HashMap<String,String>> nearPlacesList) {
+        for (int i = 0; i < nearPlacesList.size(); i++) {
             MarkerOptions options = new MarkerOptions();
-            HashMap<String,String> mapPlace = nearPlacesList.get(i);
+            HashMap<String, String> mapPlace = nearPlacesList.get(i);
 
             final String name = mapPlace.get("placeName");
             final String vicinity = mapPlace.get("vicinity");
@@ -75,7 +77,7 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> implements Go
             final double longi = Double.parseDouble(mapPlace.get("lng"));
 
 
-            LatLng latLng = new LatLng(lat,longi);
+            LatLng latLng = new LatLng(lat, longi);
             options.position(latLng);
 
             options.title(name);
@@ -84,13 +86,21 @@ public class GetNearPlaces extends AsyncTask<Object,String,String> implements Go
             mMap.setOnInfoWindowClickListener(this);
 //
 //
-            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-            mMap.addMarker(options);
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+            if (type == "hospital") {
+                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                mMap.addMarker(options);
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
 
 
+            } else {
+                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                mMap.addMarker(options);
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
 
+
+            }
         }
     }
 

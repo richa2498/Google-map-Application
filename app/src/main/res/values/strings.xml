@@ -8,5 +8,6 @@
         <item>Hybride</item>
     </string-array>
     <string name="title_activity_distance_and_duration">Map</string>
+    <string name="api_key_places">AIzaSyAflP7DoztMVPCGgXuNdx_9WKDBplGYzXE</string>
 
 </resources>

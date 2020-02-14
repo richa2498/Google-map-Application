@@ -224,13 +224,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void btnClick(View view) {
         Object[] dataTransfer = new Object[3];
+        String url;
         GetNearPlaces getNearByPlaceData = new GetNearPlaces(this);
         switch (view.getId()) {
 
             case R.id.btn_restaurants:
                 mMap.clear();
-                String url = getUrl(lat, longi, "restaurant");
-                Log.i("tag", "btnClick: " + url);
+                url = getUrl(lat, longi, "restaurant");
                 dataTransfer[0] = mMap;
                 dataTransfer[1] = url;
                 dataTransfer[2] = "resturent";
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
 
             case R.id.btn_museum:
-                // mMap.clear();
+                mMap.clear();
                 url = getUrl(lat, longi, "museum");
                 dataTransfer[0] = mMap;
                 dataTransfer[1] = url;
@@ -247,8 +247,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getNearByPlaceData.execute(dataTransfer);
                 Toast.makeText(this, "museum", Toast.LENGTH_SHORT).show();
                 break;
-
-
 
             case  R.id.btn_cafe:
                  mMap.clear();
@@ -269,7 +267,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getNearByPlaceData.execute(dataTransfer);
                 Toast.makeText(this, "library", Toast.LENGTH_SHORT).show();
                 break;
-
+            case R.id.btn_school:
+                mMap.clear();
+                url = getUrl(lat, longi, "school");
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+                dataTransfer[2] = "school";
+                getNearByPlaceData.execute(dataTransfer);
+                Toast.makeText(this, "Schools", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.btn_hospital:
+                mMap.clear();
+                url = getUrl(lat, longi, "hospital");
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+                dataTransfer[2] = "hospital";
+                getNearByPlaceData.execute(dataTransfer);
+                Toast.makeText(this, "Hospital", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.btn_getlocatiomn:
+                getUserLocation();
+                fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+                setHomeMarker();
+                break;
             case R.id.btn_clear:
                 mMap.clear();
                 break;
@@ -288,20 +308,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     }
+    private String getUrl(double latitude, double longitude, String nearbyPlace) {
+        StringBuilder googlePlaceUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlaceUrl.append("location=" + latitude + "," + longitude);
+        googlePlaceUrl.append("&radius=" + radious);
+        googlePlaceUrl.append("&type=" + nearbyPlace);
+        googlePlaceUrl.append("&key=" + getString(R.string.api_key_places));
+        Log.d("", "getUrl: "+googlePlaceUrl);
+        return googlePlaceUrl.toString();
 
-
-
-    private String getUrl(double lat, double longi, String nearplace) {
-
-        StringBuilder placeurl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        placeurl.append("location=" + lat + "," + longi);
-        placeurl.append("&radius=" + radious);
-        placeurl.append("&type:" + nearplace);
-        placeurl.append("&key=AIzaSyAflP7DoztMVPCGgXuNdx_9WKDBplGYzXE");
-        // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=43.647845,-79.3888367&radius=1000$typerestaurant&key=AIzaSyDK2Du7rvxW4d4NQmKg8qAyxaZ0dGgaY5k
-        System.out.println(placeurl.toString());
-        return placeurl.toString();
     }
+
+
+
+
 
     private void setHomeMarker() {
         locationCallback = new LocationCallback() {
